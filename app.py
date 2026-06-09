@@ -17,6 +17,12 @@ class QuestionResponse(BaseModel):
     answer: str
     session_id: str
 
+print("all ok")
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
 @app.post("/chat", response_model=QuestionResponse)
 async def chat(request: QuestionRequest):
     session_id = request.session_id or str(uuid.uuid4())
