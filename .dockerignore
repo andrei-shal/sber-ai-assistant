@@ -1,6 +1,4 @@
 knowledge
-.venv
-graph/nodes/chroma_db
 ingest.py
 find-double-knowleges.py
 assistant.py
