@@ -1,0 +1,11 @@
+chromadb
+sentence-transformers
+
+pypdf
+python-docx
+
+openai
+python-dotenv
+langchain
+fastapi
+pydantic

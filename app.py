@@ -1,0 +1,48 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+import uuid
+
+from graph.builder import graph
+
+app = FastAPI()
+
+sessions = {}
+
+class QuestionRequest(BaseModel):
+    data: str
+    session_id: str | None = None
+
+class QuestionResponse(BaseModel):
+    answer: str
+    session_id: str
+
+@app.post("/chat", response_model=QuestionResponse)
+async def chat(request: QuestionRequest):
+    session_id = request.session_id or str(uuid.uuid4())
+
+    state = sessions.get(
+        session_id,
+        {
+            "messages": []
+        }
+    )
+
+    result = graph.invoke(
+        {
+            **state,
+            "question": request.data
+        }
+    )
+
+    sessions[session_id] = {
+        "messages": result.get(
+            "messages",
+            []
+        )
+    }
+
+    return QuestionResponse(
+        answer=result["answer"],
+        session_id=session_id
+    )
