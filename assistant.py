@@ -28,6 +28,9 @@ def main():
         print(
             result["answer"]
         )
+        print(
+            result["button"]
+        )
 
 
 if __name__ == "__main__":
