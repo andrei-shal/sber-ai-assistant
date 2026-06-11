@@ -1,4 +1,4 @@
-def context_context_build_node(state):
+def document_context_build_node(state):
     documents_context = ''
 
     for document in state['documents']:

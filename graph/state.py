@@ -25,3 +25,9 @@ class AgentState(TypedDict):
     navigation_candidates: str
 
     navigation_candidates_context: str
+
+    # User data
+
+    user_data: dict
+
+    user_context: str
