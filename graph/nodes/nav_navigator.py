@@ -11,7 +11,7 @@ with open(
 ) as f:
     SYSTEM_PROMPT = f.read()
 
-def nav_navigator_node(state):
+async def nav_navigator_node(state):
 
     user_prompt = f"""
 Вопрос:
@@ -21,7 +21,7 @@ def nav_navigator_node(state):
 
     history = state.get("messages", [])
 
-    search_query = chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt, history[-4:])
+    search_query = await chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt, history[-4:])
 
     return {
         "nav_search_query": search_query,

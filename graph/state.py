@@ -1,4 +1,8 @@
-from typing import TypedDict
+from typing import TypedDict, Annotated
+
+
+def merge_strings(current: str | None, new: str | None) -> str:
+    return new if new else (current or "")
 
 class AgentState(TypedDict):
     messages: list
@@ -31,3 +35,9 @@ class AgentState(TypedDict):
     user_data: dict
 
     user_context: str
+
+    filtered_user_context: Annotated[str, merge_strings]
+
+    rag_context: Annotated[str, merge_strings]
+
+    merged_context: str

@@ -15,6 +15,7 @@ class QuestionRequest(BaseModel):
 
 class QuestionResponse(BaseModel):
     answer: str
+    button: str
     session_id: str
 
 print("all ok")
@@ -34,7 +35,9 @@ async def chat(request: QuestionRequest):
         }
     )
 
-    result = graph.invoke(
+    print(state)
+
+    result = await graph.ainvoke(
         {
             **state,
             "question": request.data
@@ -50,5 +53,6 @@ async def chat(request: QuestionRequest):
 
     return QuestionResponse(
         answer=result["answer"],
+        button=result["button"],
         session_id=session_id
     )

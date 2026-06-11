@@ -11,7 +11,7 @@ with open(
 ) as f:
     SYSTEM_PROMPT = f.read()
 
-def router_node(state):
+async def router_node(state):
     user_prompt = f"""
 Вопрос:
 
@@ -19,10 +19,10 @@ def router_node(state):
 """
 
     history = state.get("messages", [])
-    route = chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt,history[-8:])
+    route = await chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt,history[-8:])
 
     print(route)
 
     return {
-        "route": route
+        "route": route.strip()
     }

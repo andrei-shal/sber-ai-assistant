@@ -11,7 +11,7 @@ with open(
 ) as f:
     SYSTEM_PROMPT = f.read()
 
-def rag_assistant_node(state):
+async def rag_assistant_node(state):
 
     user_prompt = f"""
 Документы найденные по теме вопроса:
@@ -30,7 +30,7 @@ def rag_assistant_node(state):
 
     history = state.get("messages", [])
 
-    answer = chat(os.getenv("ASSISTANT"), SYSTEM_PROMPT, user_prompt, history[-4:])
+    answer = await chat(os.getenv("ASSISTANT"), SYSTEM_PROMPT, user_prompt, history[-4:])
 
     messages = (history + [
         {

@@ -10,7 +10,10 @@ from graph.nodes.nav_navigator import nav_navigator_node
 from graph.nodes.nav_search import nav_search_node
 from graph.nodes.user_assistant import user_assistant_node
 from graph.nodes.user_context_builder import user_context_builder_node
+from graph.nodes.user_context_merge import user_context_merge_node
+from graph.nodes.user_data_filtrator import user_data_filtrator_node
 from graph.nodes.user_load_data import user_load_data_node
+from graph.nodes.user_rag_assistant import user_rag_assistant_node
 from graph.nodes.user_rag_req_writer import user_rag_req_writer_node
 from graph.state import AgentState
 
@@ -105,8 +108,23 @@ def build_graph():
     )
 
     builder.add_node(
+        "user_rag_assistant",
+        user_rag_assistant_node
+    )
+
+    builder.add_node(
+        "user_data_filtrator",
+        user_data_filtrator_node
+    )
+
+    builder.add_node(
         "user_assistant",
         user_assistant_node
+    )
+
+    builder.add_node(
+        "user_context_merge",
+        user_context_merge_node
     )
 
     # Построение графа
@@ -122,7 +140,7 @@ def build_graph():
         {
             "rag": "rag_rewriter",
             "navigation": "nav_navigator",
-            "user_data": "user_load_data"
+            "user_data": "rag_rewriter"
         }
     )
 
@@ -161,6 +179,16 @@ def build_graph():
     )
 
     builder.add_edge(
+        "user_context_builder",
+        "user_data_filtrator"
+    )
+
+    builder.add_edge(
+        "user_data_filtrator",
+        "user_context_merge"
+    )
+
+    builder.add_edge(
         "user_rag_req_writer",
         "user_document_search"
     )
@@ -172,6 +200,16 @@ def build_graph():
 
     builder.add_edge(
         "user_document_context_build",
+        "user_rag_assistant"
+    )
+
+    builder.add_edge(
+        "user_rag_assistant",
+        "user_context_merge"
+    )
+
+    builder.add_edge(
+        "user_context_merge",
         "user_assistant"
     )
 

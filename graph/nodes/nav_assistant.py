@@ -14,7 +14,7 @@ with open(
     SYSTEM_PROMPT = f.read()
 
 
-def nav_assistant_node(state):
+async def nav_assistant_node(state):
 
     user_prompt = f"""
 Найденные кандидаты для навигации:
@@ -35,7 +35,7 @@ def nav_assistant_node(state):
 
     history = state.get("messages", [])
 
-    response = chat(
+    response = await chat(
         os.getenv("ASSISTANT"),
         SYSTEM_PROMPT,
         user_prompt,
