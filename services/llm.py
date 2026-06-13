@@ -19,7 +19,7 @@ async def chat(model:str, system_prompt: str, user_prompt: str, history: list):
                 "role": "system",
                 "content": system_prompt
             },
-            *history,
+            *(history[-2:]),
             {
                 "role": "user",
                 "content": user_prompt

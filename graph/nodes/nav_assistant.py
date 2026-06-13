@@ -44,22 +44,7 @@ async def nav_assistant_node(state):
 
     parsed = json.loads(response)
 
-    messages = (
-        history
-        + [
-            {
-                "role": "user",
-                "content": state["question"]
-            },
-            {
-                "role": "assistant",
-                "content": parsed["answer"]
-            }
-        ]
-    )[-20:]
-
     return {
         "answer": parsed["answer"],
         "button": parsed["button"],
-        "messages": messages
     }

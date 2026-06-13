@@ -13,6 +13,9 @@ with open(
 
 async def user_rag_req_writer_node(state):
     user_prompt = f"""
+Платежи:
+{state["user_context"]}
+
 Вопрос:
 
 {state["question"]}

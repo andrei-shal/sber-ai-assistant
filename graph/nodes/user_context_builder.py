@@ -1,6 +1,9 @@
 def user_context_builder_node(state):
 
-    user_data = state["user_data"]["payments"]
+    user_data = state["user_data"]
+
+    print(user_data)
+    print(state["user_sql"])
 
     context = "Платежи пользователя:\n\n"
 

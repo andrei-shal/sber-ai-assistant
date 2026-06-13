@@ -16,6 +16,7 @@ class QuestionRequest(BaseModel):
 class QuestionResponse(BaseModel):
     answer: str
     button: str
+    support: str
     session_id: str
 
 print("all ok")
@@ -54,5 +55,6 @@ async def chat(request: QuestionRequest):
     return QuestionResponse(
         answer=result["answer"],
         button=result["button"],
+        support=result["support"],
         session_id=session_id
     )

@@ -19,10 +19,15 @@ async def router_node(state):
 """
 
     history = state.get("messages", [])
-    route = await chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt,history[-8:])
+    route = await chat(os.getenv("SYSTEM_MODEL"), SYSTEM_PROMPT, user_prompt,history[-4:])
 
     print(route)
 
+    route_text = str(route).strip()
+    normalized = route_text.lower()
+    if normalized not in {"rag", "navigation", "user_data"}:
+        normalized = "rag"
+
     return {
-        "route": route.strip()
+        "route": normalized
     }

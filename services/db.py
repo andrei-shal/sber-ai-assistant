@@ -1,3 +1,28 @@
+import sqlite3
+import os
+
+_DB_PATH = os.path.join(os.path.dirname(__file__), "payments.db")
+
+# --- Data source: SQLite ---
+
+def query_payments(sql_query: str) -> list[dict]:
+    """Выполняет произвольный SQL SELECT и возвращает список платежей.
+
+    Колонки в результате: id, company_id, receiver_id, amount, status, timestamp.
+    """
+    conn = sqlite3.connect(_DB_PATH)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    try:
+        cursor.execute(sql_query)
+        rows = cursor.fetchall()
+        return [dict(row) for row in rows]
+    finally:
+        conn.close()
+
+
+# --- Legacy stub (hardcoded data) ---
+
 def get_user_payments():
     return [
   {
@@ -120,3 +145,5 @@ def get_user_payments():
     "timestamp": 1781180000
   }
 ]
+
+print(query_payments(""))

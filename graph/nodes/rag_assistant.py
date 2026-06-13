@@ -32,19 +32,7 @@ async def rag_assistant_node(state):
 
     answer = await chat(os.getenv("ASSISTANT"), SYSTEM_PROMPT, user_prompt, history[-4:])
 
-    messages = (history + [
-        {
-            "role": "user",
-            "content": state["question"]
-        },
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    ])[-20:]
-
     return {
         "answer": answer,
         "button": "",
-        "messages": messages
     }

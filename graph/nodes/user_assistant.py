@@ -12,10 +12,12 @@ with open(
     SYSTEM_PROMPT = f.read()
 
 async def user_assistant_node(state):
-    print("gg")
-    print(state["merged_context"])
     user_prompt = f"""
-{state["merged_context"]}
+Платежи:
+{state["user_context"]}
+
+Документы:
+{state["documents_context"]}
 
 Вопрос:
 
@@ -31,19 +33,7 @@ async def user_assistant_node(state):
 
     answer = await chat(os.getenv("ASSISTANT"), SYSTEM_PROMPT, user_prompt, history[-4:])
 
-    messages = (history + [
-        {
-            "role": "user",
-            "content": state["question"]
-        },
-        {
-            "role": "assistant",
-            "content": answer
-        }
-    ])[-20:]
-
     return {
         "answer": answer,
         "button": "",
-        "messages": messages
     }
