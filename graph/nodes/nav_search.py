@@ -4,8 +4,10 @@ def nav_search_node(state):
 
     print(state["nav_search_query"])
     queries = [
-        state["nav_search_query"]
-    ]
+        q.strip()
+        for q in state["nav_search_query"].split(";")
+        if q.strip()
+    ][:5]
 
     all_results = []
 
