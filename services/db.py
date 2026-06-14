@@ -146,4 +146,3 @@ def get_user_payments():
   }
 ]
 
-print(query_payments(""))
