@@ -42,9 +42,15 @@ async def nav_assistant_node(state):
         history[-4:]
     )
 
-    parsed = json.loads(response)
+    try:
+        parsed = json.loads(response)
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return {
+            "answer": "Не удалось обработать ответ. Пожалуйста, уточните ваш вопрос.",
+            "button": "",
+        }
 
     return {
-        "answer": parsed["answer"],
-        "button": parsed["button"],
+        "answer": parsed.get("answer", ""),
+        "button": parsed.get("button", ""),
     }

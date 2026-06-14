@@ -40,7 +40,14 @@ async def control_node(state):
 
     print(answer)
 
-    parsed = json.loads(answer)
+    try:
+        parsed = json.loads(answer)
+    except (json.JSONDecodeError, KeyError, TypeError):
+        return {
+            "answer": "К сожалению, я не могу предоставить корректный ответ на данный вопрос или помочь с решением проблемы. Система работает в тестовом режиме, имеет доступ не ко всем данным и в отдельных случаях может работать некорректно. Рекомендуем обратиться в чат поддержки для получения помощи специалиста.",
+            "support": "True",
+            "messages": history[-20:]
+        }
 
     messages = (history + [
         {
@@ -49,12 +56,12 @@ async def control_node(state):
         },
         {
             "role": "assistant",
-            "content": parsed["answer"]
+            "content": parsed.get("answer", "")
         }
     ])[-20:]
 
     return {
-        "answer": parsed["answer"],
-        "support": str(parsed["support"]),
+        "answer": parsed.get("answer", ""),
+        "support": str(parsed.get("support", True)),
         "messages": messages
     }
