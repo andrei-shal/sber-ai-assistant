@@ -1,4 +1,8 @@
 from graph.builder import graph
+from services.pipeline_logger import get_logger
+import time
+
+log = get_logger()
 
 
 def main():
@@ -20,6 +24,9 @@ def main():
         if not question:
             continue
 
+        t_start = time.perf_counter()
+        log.pipeline_start(question, "console")
+
         result = graph.invoke(
             {
                 "messages": messages,
@@ -28,6 +35,9 @@ def main():
         )
 
         answer = result.get("answer", "")
+        elapsed = time.perf_counter() - t_start
+
+        log.pipeline_end(answer, result.get("support", "True"), elapsed)
 
         messages.append({
             "role": "user",

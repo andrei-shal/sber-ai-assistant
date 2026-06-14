@@ -1,9 +1,14 @@
+from services.pipeline_logger import get_logger
+
+log = get_logger()
+
+
 def user_context_builder_node(state):
 
     user_data = state["user_data"]
 
-    print(user_data)
-    print(state["user_sql"])
+    log.info(f"SQL запрос: {state.get('user_sql', '')}")
+    log.info(f"Загружено записей: {len(user_data)}")
 
     context = "Платежи пользователя:\n\n"
 

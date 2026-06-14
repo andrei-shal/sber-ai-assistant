@@ -2,8 +2,12 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 
 import uuid
+import time
 
 from graph.builder import graph
+from services.pipeline_logger import get_logger
+
+log = get_logger()
 
 app = FastAPI()
 
@@ -19,7 +23,7 @@ class QuestionResponse(BaseModel):
     support: str
     session_id: str
 
-print("all ok")
+log.info("FastAPI приложение запущено")
 
 @app.get("/")
 async def root():
@@ -28,6 +32,9 @@ async def root():
 @app.post("/chat", response_model=QuestionResponse)
 async def chat(request: QuestionRequest):
     session_id = request.session_id or str(uuid.uuid4())
+    t_start = time.perf_counter()
+
+    log.pipeline_start(request.data, session_id)
 
     state = sessions.get(
         session_id,
@@ -36,7 +43,7 @@ async def chat(request: QuestionRequest):
         }
     )
 
-    print(state)
+    log.info(f"История сообщений: {len(state.get('messages', []))} шт")
 
     try:
         result = await graph.ainvoke(
@@ -46,13 +53,21 @@ async def chat(request: QuestionRequest):
             }
         )
     except Exception as e:
-        print(f"Ошибка при вызове графа: {e}")
+        elapsed = time.perf_counter() - t_start
+        log.error(f"Критическая ошибка пайплайна: {type(e).__name__}: {e}")
+        log.pipeline_end("Внутренняя ошибка", "True", elapsed)
         return QuestionResponse(
             answer="К сожалению, произошла внутренняя ошибка. Пожалуйста, повторите запрос позже.",
             button="",
             support="True",
             session_id=session_id
         )
+
+    answer = result.get("answer", "")
+    support = result.get("support", "True")
+    elapsed = time.perf_counter() - t_start
+
+    log.pipeline_end(answer, support, elapsed)
 
     sessions[session_id] = {
         "messages": result.get(
@@ -62,8 +77,8 @@ async def chat(request: QuestionRequest):
     }
 
     return QuestionResponse(
-        answer=result.get("answer", ""),
+        answer=answer,
         button=result.get("button", ""),
-        support=result.get("support", "True"),
+        support=support,
         session_id=session_id
     )

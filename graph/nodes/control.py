@@ -1,11 +1,12 @@
-import json
-
 from services.llm import chat
+from services.pipeline_logger import get_logger
 import os
 
 from dotenv import load_dotenv
 
 load_dotenv()
+
+log = get_logger()
 
 with open(
     "prompts/control_assistant.txt",
@@ -22,6 +23,8 @@ async def control_node(state):
     else:
         button = "не корректная"
 
+    log.info(f"Кнопка: {button}")
+
     user_prompt = f"""
 Вопрос:
 {state["question"]}
@@ -32,17 +35,16 @@ async def control_node(state):
 {state["answer"]}
 """
 
-    print (button)
-
     history = state.get("messages", [])
 
     answer = await chat(os.getenv("ASSISTANT"), SYSTEM_PROMPT, user_prompt, history[-4:])
 
-    print(answer)
+    log.info(f"RAW control ответ: {answer[:200]}")
 
     try:
         parsed = json.loads(answer)
     except (json.JSONDecodeError, KeyError, TypeError):
+        log.error(f"Не удалось распарсить JSON: {answer[:300]}")
         return {
             "answer": "К сожалению, я не могу предоставить корректный ответ на данный вопрос или помочь с решением проблемы. Система работает в тестовом режиме, имеет доступ не ко всем данным и в отдельных случаях может работать некорректно. Рекомендуем обратиться в чат поддержки для получения помощи специалиста.",
             "support": "True",

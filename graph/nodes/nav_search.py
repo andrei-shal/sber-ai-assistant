@@ -1,8 +1,11 @@
+from services.pipeline_logger import get_logger
 from services.nav_rag import search
+
+log = get_logger()
 
 def nav_search_node(state):
 
-    print(state["nav_search_query"])
+    log.info(f"nav search query: {state['nav_search_query']}")
     queries = [
         q.strip()
         for q in state["nav_search_query"].split(";")
@@ -36,7 +39,8 @@ def nav_search_node(state):
         key=lambda x: x["distance"]
     )
 
-    print(results[:10])
+    for r in results[:10]:
+        log.info(f"  🧭 dist={r['distance']:.4f} | {r['title']} ({r['journey_id']})")
 
     return {
         "navigation_candidates": results[:10]

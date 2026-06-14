@@ -23,7 +23,19 @@ from graph.nodes.rag_assistant import rag_assistant_node
 from graph.nodes.document_context_build import document_context_build_node
 from graph.nodes.router import router_node
 
+from services.pipeline_logger import get_logger, logged_node
+
+log = get_logger()
+
+
+def _logged(name: str, func):
+    """Обёртка: добавляет логирование входа/выхода/ошибок к узлу графа."""
+    return logged_node(name)(func)
+
+
 def build_graph():
+
+    log.info("Сборка графа...")
 
     builder = StateGraph(
         AgentState
@@ -33,98 +45,98 @@ def build_graph():
 
     builder.add_node(
         "router",
-        router_node
+        _logged("router", router_node)
     )
 
     builder.add_node(
         "control_button",
-        control_button_check_node
+        _logged("control_button", control_button_check_node)
     )
 
     builder.add_node(
         "controller",
-        control_node
+        _logged("controller", control_node)
     )
 
     # Узлы RAG
 
     builder.add_node(
         "rag_rewriter",
-        rag_rewriter_node
+        _logged("rag_rewriter", rag_rewriter_node)
     )
 
     builder.add_node(
         "rag_assistant",
-        rag_assistant_node
+        _logged("rag_assistant", rag_assistant_node)
     )
 
     builder.add_node(
         "rag_document_search",
-        document_search_node
+        _logged("rag_document_search", document_search_node)
     )
 
     builder.add_node(
         "rag_document_context_build",
-        document_context_build_node
+        _logged("rag_document_context_build", document_context_build_node)
     )
 
     # Узлы навигации
 
     builder.add_node(
         "nav_navigator",
-        nav_navigator_node
+        _logged("nav_navigator", nav_navigator_node)
     )
 
     builder.add_node(
         "nav_search",
-        nav_search_node
+        _logged("nav_search", nav_search_node)
     )
 
     builder.add_node(
         "nav_build_context",
-        nav_build_context_node
+        _logged("nav_build_context", nav_build_context_node)
     )
 
     builder.add_node(
         "nav_assistant",
-        nav_assistant_node
+        _logged("nav_assistant", nav_assistant_node)
     )
 
     # Узлы работы с данными пользователя
 
     builder.add_node(
         "user_data_sql_writer",
-        user_data_sql_writer_node
+        _logged("user_data_sql_writer", user_data_sql_writer_node)
     )
 
     builder.add_node(
         "user_load_data",
-        user_load_data_node
+        _logged("user_load_data", user_load_data_node)
     )
 
     builder.add_node(
         "user_context_builder",
-        user_context_builder_node
+        _logged("user_context_builder", user_context_builder_node)
     )
 
     builder.add_node(
         "user_rag_req_writer",
-        user_rag_req_writer_node
+        _logged("user_rag_req_writer", user_rag_req_writer_node)
     )
 
     builder.add_node(
         "user_document_search",
-        document_search_node
+        _logged("user_document_search", document_search_node)
     )
 
     builder.add_node(
         "user_document_context_build",
-        document_context_build_node
+        _logged("user_document_context_build", document_context_build_node)
     )
 
     builder.add_node(
         "user_assistant",
-        user_assistant_node
+        _logged("user_assistant", user_assistant_node)
     )
 
     # Построение графа

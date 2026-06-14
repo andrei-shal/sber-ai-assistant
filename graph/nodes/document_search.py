@@ -1,6 +1,9 @@
+from services.pipeline_logger import get_logger
 import hashlib
 
 from services.rag import search
+
+log = get_logger()
 
 def document_search_node(state):
     queries = [
@@ -18,11 +21,10 @@ def document_search_node(state):
 
     unique_results = uniqueize(all_results)
 
-    for result in unique_results:
-        print(
-            f"{result['distance']:.4f} "
-            f"{result['source']}"
-        )
+    for result in unique_results[:10]:
+        log.info(f"  📄 dist={result['distance']:.4f} | {result['source']}")
+
+    log.info(f"Всего найдено документов: {len(unique_results)}")
 
     return {
         "documents": unique_results
