@@ -35,8 +35,6 @@ def _logged(name: str, func):
 
 def build_graph():
 
-    log.info("Сборка графа...")
-
     builder = StateGraph(
         AgentState
     )
@@ -250,4 +248,13 @@ def build_graph():
     return builder.compile()
 
 
-graph = build_graph()
+# Ленивая инициализация — граф строится при первом вызове get_graph()
+_graph = None
+
+
+def get_graph():
+    global _graph
+    if _graph is None:
+        log.info("Сборка графа...")
+        _graph = build_graph()
+    return _graph
