@@ -29,11 +29,14 @@ IDS = [
 ]
 
 def control_button_check_node(state):
-    if state["button"] == "":
+    button = state.get("button")
+
+    # None или пустая строка — кнопка не нужна, это корректно
+    if not button:
         return {
             "button_correct": True,
         }
-    if state["button"] in IDS:
+    if button in IDS:
         return {
             "button_correct": True,
         }
