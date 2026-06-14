@@ -38,12 +38,21 @@ async def chat(request: QuestionRequest):
 
     print(state)
 
-    result = await graph.ainvoke(
-        {
-            **state,
-            "question": request.data
-        }
-    )
+    try:
+        result = await graph.ainvoke(
+            {
+                **state,
+                "question": request.data
+            }
+        )
+    except Exception as e:
+        print(f"Ошибка при вызове графа: {e}")
+        return QuestionResponse(
+            answer="К сожалению, произошла внутренняя ошибка. Пожалуйста, повторите запрос позже.",
+            button="",
+            support="True",
+            session_id=session_id
+        )
 
     sessions[session_id] = {
         "messages": result.get(
@@ -53,8 +62,8 @@ async def chat(request: QuestionRequest):
     }
 
     return QuestionResponse(
-        answer=result["answer"],
-        button=result["button"],
-        support=result["support"],
+        answer=result.get("answer", ""),
+        button=result.get("button", ""),
+        support=result.get("support", "True"),
         session_id=session_id
     )
