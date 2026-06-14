@@ -148,6 +148,7 @@ for file in knowledge_dir.rglob("*"):
     metadatas = [
         {
             "source": str(file),
+            "relative_path": str(relative_path),
             "hash": hash_value,
             "path": "/".join(relative_path.parts[:-1]),
             "category": relative_path.parts[0] if len(relative_path.parts) > 0 else "",
