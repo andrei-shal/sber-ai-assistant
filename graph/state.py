@@ -25,7 +25,7 @@ class AgentState(TypedDict, total=False):
 
     nav_search_query: str
 
-    navigation_candidates: str
+    navigation_candidates: list
 
     navigation_candidates_context: str
 

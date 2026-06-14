@@ -1,4 +1,4 @@
-from services.db import get_user_payments, query_payments
+from services.db import query_payments
 
 
 def user_load_data_node(state):
