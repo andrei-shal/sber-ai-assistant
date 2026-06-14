@@ -1,13 +1,19 @@
+import os
 import chromadb
 
 from sentence_transformers import SentenceTransformer
+
+_CHROMA_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+    "chroma_db"
+)
 
 embedding_model = SentenceTransformer(
     "intfloat/multilingual-e5-base"
 )
 
 chroma = chromadb.PersistentClient(
-    path="./chroma_db"
+    path=_CHROMA_DIR
 )
 
 collection = chroma.get_collection(
