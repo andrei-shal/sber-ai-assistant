@@ -11,6 +11,3 @@ venv/
 
 # Environment
 .env
-
-# ChromaDB
-chroma_db/
