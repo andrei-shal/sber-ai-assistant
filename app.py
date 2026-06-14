@@ -78,7 +78,7 @@ async def chat(request: QuestionRequest):
 
     return QuestionResponse(
         answer=answer,
-        button=result.get("button", ""),
+        button=result.get("button") or "",
         support=support,
         session_id=session_id
     )

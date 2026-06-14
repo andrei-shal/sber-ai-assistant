@@ -52,5 +52,5 @@ async def nav_assistant_node(state):
 
     return {
         "answer": parsed.get("answer", ""),
-        "button": parsed.get("button", ""),
+        "button": parsed.get("button") or "",
     }

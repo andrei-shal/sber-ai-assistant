@@ -1,11 +1,13 @@
+import asyncio
+import time
+
 from graph.builder import graph
 from services.pipeline_logger import get_logger
-import time
 
 log = get_logger()
 
 
-def main():
+async def main():
 
     messages = []
 
@@ -27,7 +29,7 @@ def main():
         t_start = time.perf_counter()
         log.pipeline_start(question, "console")
 
-        result = graph.invoke(
+        result = await graph.ainvoke(
             {
                 "messages": messages,
                 "question": question
@@ -54,8 +56,8 @@ def main():
         )
 
         print(answer)
-        print(result.get("button", ""))
+        print(result.get("button") or "")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
