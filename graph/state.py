@@ -1,6 +1,6 @@
 from typing import TypedDict, Annotated
 
-class AgentState(TypedDict):
+class AgentState(TypedDict, total=False):
     messages: list
 
     question: str
@@ -33,6 +33,6 @@ class AgentState(TypedDict):
 
     user_sql: str
 
-    user_data: dict
+    user_data: list
 
     user_context: str
