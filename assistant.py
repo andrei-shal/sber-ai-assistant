@@ -1,10 +1,11 @@
 import asyncio
 import time
 
-from graph.builder import graph
+from graph.builder import get_graph
 from services.pipeline_logger import get_logger
 
 log = get_logger()
+graph = get_graph()
 
 
 async def main():

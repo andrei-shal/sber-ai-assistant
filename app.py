@@ -1,21 +1,25 @@
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from pydantic import BaseModel
 
 import uuid
 import time
 
-from graph.builder import graph
 from services.pipeline_logger import get_logger
 
 log = get_logger()
 
-app = FastAPI()
+_session = {}
 
-sessions = {}
+# Граф инициализируется один раз в lifespan
+_graph = None
+
 
 class QuestionRequest(BaseModel):
     data: str
     session_id: str | None = None
+
 
 class QuestionResponse(BaseModel):
     answer: str
@@ -23,33 +27,47 @@ class QuestionResponse(BaseModel):
     support: str
     session_id: str
 
-log.info("FastAPI приложение запущено")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    global _graph
+    from graph.builder import get_graph
+    _graph = get_graph()
+    log.info("FastAPI приложение запущено ✅")
+    yield
+    _session.clear()
+    log.info("FastAPI приложение остановлено")
+
+
+app = FastAPI(lifespan=lifespan)
+
 
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
+
 @app.post("/chat", response_model=QuestionResponse)
 async def chat(request: QuestionRequest):
+    global _graph
+
     session_id = request.session_id or str(uuid.uuid4())
     t_start = time.perf_counter()
 
     log.pipeline_start(request.data, session_id)
 
-    state = sessions.get(
+    state = _session.get(
         session_id,
-        {
-            "messages": []
-        }
+        {"messages": []},
     )
 
     log.info(f"История сообщений: {len(state.get('messages', []))} шт")
 
     try:
-        result = await graph.ainvoke(
+        result = await _graph.ainvoke(
             {
                 **state,
-                "question": request.data
+                "question": request.data,
             }
         )
     except Exception as e:
@@ -60,7 +78,7 @@ async def chat(request: QuestionRequest):
             answer="К сожалению, произошла внутренняя ошибка. Пожалуйста, повторите запрос позже.",
             button="",
             support="True",
-            session_id=session_id
+            session_id=session_id,
         )
 
     answer = result.get("answer", "")
@@ -69,16 +87,13 @@ async def chat(request: QuestionRequest):
 
     log.pipeline_end(answer, support, elapsed)
 
-    sessions[session_id] = {
-        "messages": result.get(
-            "messages",
-            []
-        )
+    _session[session_id] = {
+        "messages": result.get("messages", []),
     }
 
     return QuestionResponse(
         answer=answer,
         button=result.get("button") or "",
         support=support,
-        session_id=session_id
+        session_id=session_id,
     )
